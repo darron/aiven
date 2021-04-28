@@ -30,7 +30,7 @@ rebuild: clean ## Force rebuild of all packages.
 	go build -a $(BUILD_COMMAND)
 
 linux: clean ## Cross compile for linux.
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILD_COMMAND)
+	CGO_ENABLED=0 GOOS=linux go build $(BUILD_COMMAND)
 
 gzip: ## Compress current compiled binary.
 	gzip bin/$(BINARY_NAME)

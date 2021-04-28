@@ -1,5 +1,9 @@
 package main
 
-func main() {
+import "fmt"
 
+func main() {
+	for {
+		fmt.Println("aiven lives")
+	}
 }
