@@ -1,9 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/darron/aiven/cmd"
 
 func main() {
-	for {
-		fmt.Println("aiven lives")
-	}
+	cmd.Root()
 }
