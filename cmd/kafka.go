@@ -40,10 +40,11 @@ func Consumer() (*kafka.Reader, error) {
 
 	kafkaHost := os.Getenv("KAFKA_HOST")
 	kafkaTopic := os.Getenv("KAFKA_TOPIC")
+	kafkaConsumerGroup := os.Getenv("KAFKA_CONSUMER_GROUP")
 
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{kafkaHost},
-		GroupID: "storage",
+		GroupID: kafkaConsumerGroup,
 		Topic:   kafkaTopic,
 		Dialer:  dialer,
 	})
