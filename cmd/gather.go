@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/darron/aiven/site"
 	"github.com/spf13/cobra"
@@ -13,17 +14,20 @@ var (
 		Use:   "gather",
 		Short: "Gather metrics and save to Kafka",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := Gather(List)
+			err := Gather(list)
 			if err != nil {
 				log.Fatal(err)
 			}
 		},
 	}
-	List string
+	list           string
+	debug          bool
+	httpGetTimeout = 5 * time.Second
 )
 
 func init() {
-	gatherCmd.Flags().StringVarP(&List, "list", "l", "websites", "List of websites")
+	gatherCmd.Flags().StringVarP(&list, "list", "l", "websites", "List of websites")
+	gatherCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Show Debug Information")
 }
 
 func Gather(filename string) error {
@@ -39,7 +43,11 @@ func Gather(filename string) error {
 	// Send data to Kafka.
 	// Lather, rinse, repeat.
 	for _, eachSite := range sites {
-		fmt.Printf("%#v\n", eachSite)
+		// Grab the metrics from each site.
+		_, err := eachSite.GetMetrics(httpGetTimeout, debug)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	return nil
 }
