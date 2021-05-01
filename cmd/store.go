@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -19,9 +20,24 @@ var storeCmd = &cobra.Command{
 }
 
 func Store() error {
-	for {
-		log.Println("Storing")
-		time.Sleep(5 * time.Second)
+
+	// Connect to Kafka.
+	r, err := Consumer()
+	if err != nil {
+		return fmt.Errorf("kafka problem: %w", err)
 	}
+	defer r.Close()
+
+	// Read from Kafka.
+	for {
+		m, err := r.ReadMessage(context.Background())
+		if err != nil {
+			break
+		}
+		fmt.Printf("message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
+	}
+
+	// TODO: Write to Postgres.
+
 	return nil
 }

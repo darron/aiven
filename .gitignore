@@ -3,3 +3,4 @@ bin/
 ca.pem
 service.cert
 service.key
+.DS_Store
