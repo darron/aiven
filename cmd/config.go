@@ -12,6 +12,9 @@ type Config struct {
 type CommonConfig struct {
 	KafkaTopic    string `env:"KAFKA_TOPIC,default=sites"`
 	KafkaHostname string `env:"KAFKA_HOST,required"`
+	KafkaCert     string `env:"KAFKA_CERT,default=service.cert"`
+	KafkaKey      string `env:"KAFKA_KEY,default=service.key"`
+	KafkaCA       string `env:"KAFKA_CA,default=ca.pem"`
 }
 
 type StoreConfig struct {

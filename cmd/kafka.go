@@ -12,7 +12,7 @@ import (
 func Producer(cfg Config) (*kafka.Writer, error) {
 
 	// Get the dialer with TLS config.
-	dialer, err := Dialer()
+	dialer, err := Dialer(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func Producer(cfg Config) (*kafka.Writer, error) {
 func Consumer(cfg Config) (*kafka.Reader, error) {
 
 	// Get the dialer with TLS config.
-	dialer, err := Dialer()
+	dialer, err := Dialer(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -44,17 +44,18 @@ func Consumer(cfg Config) (*kafka.Reader, error) {
 	return r, nil
 }
 
-func Dialer() (*kafka.Dialer, error) {
+// Dialer connects to Kafka and sets up TLS connection.
+func Dialer(cfg Config) (*kafka.Dialer, error) {
 	var dialer kafka.Dialer
 
 	// Load the certs from the filesystem.
-	cert, err := tls.LoadX509KeyPair("service.cert", "service.key")
+	cert, err := tls.LoadX509KeyPair(cfg.KafkaCert, cfg.KafkaKey)
 	if err != nil {
 		return &dialer, err
 	}
 
 	// Let's load the CA
-	ca, err := ioutil.ReadFile("ca.pem")
+	ca, err := ioutil.ReadFile(cfg.KafkaCA)
 	if err != nil {
 		return &dialer, err
 	}
