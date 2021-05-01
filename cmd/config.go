@@ -6,12 +6,14 @@ import (
 	"github.com/joeshaw/envdecode"
 )
 
+// Config holds all of the configuration for the application.
 type Config struct {
 	CommonConfig
 	GatherConfig
 	StoreConfig
 }
 
+// CommonConfig holds configuration common to all modes of operation.
 type CommonConfig struct {
 	KafkaTopic    string `env:"KAFKA_TOPIC,default=sites"`
 	KafkaHostname string `env:"KAFKA_HOST,required"`
@@ -20,17 +22,20 @@ type CommonConfig struct {
 	KafkaCA       string `env:"KAFKA_CA,default=ca.pem"`
 }
 
+// StoreConfig holds configuration only used by `bin/aiven store`
 type StoreConfig struct {
 	KafkaConsumerGroup string `env:"KAFKA_CONSUMER_GROUP,default=storage"`
 	PostgresURL        string `env:"POSTGRES_URL,required"`
 	PostgresCA         string `env:"POSTGRES_CA,default=postgres-ca.pem"`
 }
 
+// GatherConfig holds configuration only used by `bin/aiven gather`
 type GatherConfig struct {
 	HTTPTimeout time.Duration `env:"HTTP_TIMEOUT,default=5s"`
 	SitesList   string        `env:"SITES_LIST,default=websites.csv"`
 }
 
+// Load gets configuration from the environment and returns Config and error.
 func Load(configType string) (Config, error) {
 	var config Config
 	var common CommonConfig
