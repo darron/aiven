@@ -2,6 +2,7 @@ package site
 
 import (
 	"encoding/csv"
+	"errors"
 	"os"
 	"time"
 )
@@ -41,6 +42,9 @@ func GetEntries(filename string) (Entries, error) {
 		if s.Address != "" {
 			entries = append(entries, s)
 		}
+	}
+	if len(entries) == 0 {
+		return entries, errors.New("no entries - cannot proceed")
 	}
 	return entries, nil
 }
