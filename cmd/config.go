@@ -22,6 +22,8 @@ type CommonConfig struct {
 
 type StoreConfig struct {
 	KafkaConsumerGroup string `env:"KAFKA_CONSUMER_GROUP,default=storage"`
+	PostgresURL        string `env:"POSTGRES_URL,required"`
+	PostgresCA         string `env:"POSTGRES_CA,default=postgres-ca.pem"`
 }
 
 type GatherConfig struct {
