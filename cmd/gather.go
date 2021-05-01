@@ -27,7 +27,7 @@ var (
 )
 
 func init() {
-	gatherCmd.Flags().StringVarP(&list, "list", "l", "websites", "List of websites")
+	gatherCmd.Flags().StringVarP(&list, "list", "l", "websites.csv", "List of websites")
 	gatherCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Show Debug Information")
 }
 
@@ -35,7 +35,7 @@ func Gather(filename string) error {
 	// Read website list from disk.
 	sites, err := site.GetEntries(filename)
 	if err != nil {
-		return fmt.Errorf("getSites %q Error: %w", filename, err)
+		return fmt.Errorf("GetEntries %q Error: %w", filename, err)
 	}
 
 	// Connect to Kafka.

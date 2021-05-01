@@ -89,6 +89,7 @@ func (e Entry) GetMetrics(timeout time.Duration, h *http.Client, debug bool) (Me
 	return m, nil
 }
 
+// GetEntries reads a file and returns website Entries.
 func GetEntries(filename string) (Entries, error) {
 	var entries Entries
 	f, err := os.Open(filename)

@@ -1,17 +1,14 @@
 BINARY_NAME ?= aiven
 CONTAINER_NAME ?= aiven
-GITHUB_REPO ?= github.com/darron/aiven
 
-BUILD_FLAGS=-X=main.GitCommit=$(GIT_COMMIT)
-BUILD_COMMAND=-mod=vendor -ldflags "$(BUILD_FLAGS)" -o bin/$(BINARY_NAME) main.go
-GIT_COMMIT=$(shell git rev-parse HEAD)
+BUILD_COMMAND=-mod=vendor -o bin/$(BINARY_NAME) main.go
 UNAME=$(shell uname -s | tr '[:upper:]' '[:lower:]')
-THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 all: build
 
 deps: ## Install all dependencies.
-	go mod vendor && go mod tidy
+	go mod vendor
+	go mod tidy
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
