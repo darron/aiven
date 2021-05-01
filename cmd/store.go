@@ -12,14 +12,19 @@ var storeCmd = &cobra.Command{
 	Use:   "store",
 	Short: "store metrics in Postgres",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := Store()
+		cfg, err := Load("store")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = Store(cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
 	},
 }
 
-func Store() error {
+func Store(cfg Config) error {
+	fmt.Printf("Config: %#v\n", cfg)
 
 	// Connect to Kafka.
 	r, err := Consumer()

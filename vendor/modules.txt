@@ -2,6 +2,9 @@
 github.com/golang/snappy
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
+# github.com/joeshaw/envdecode v0.0.0-20200121155833-099f1fc765bd
+## explicit
+github.com/joeshaw/envdecode
 # github.com/klauspost/compress v1.9.8
 github.com/klauspost/compress/fse
 github.com/klauspost/compress/huff0

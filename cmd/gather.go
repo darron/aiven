@@ -18,7 +18,11 @@ var (
 		Use:   "gather",
 		Short: "Gather metrics and save to Kafka",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := Gather(list)
+			cfg, err := Load("")
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = Gather(cfg, list)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -34,7 +38,9 @@ func init() {
 	gatherCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Show Debug Information")
 }
 
-func Gather(filename string) error {
+func Gather(cfg Config, filename string) error {
+	fmt.Printf("Config: %#v\n", cfg)
+
 	// Read website list from disk.
 	sites, err := site.GetEntries(filename)
 	if err != nil {
