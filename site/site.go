@@ -13,12 +13,12 @@ import (
 )
 
 type Metrics struct {
-	CapturedAt   time.Time
-	Address      string
-	ResponseTime time.Duration
-	Status       int
-	Regexp       string
-	RegexpStatus bool
+	CapturedAt   time.Time     `json:"captured_at"`
+	Address      string        `json:"address"`
+	ResponseTime time.Duration `json:"response_time"`
+	StatusCode   int           `json:"status_code"`
+	Regexp       string        `json:"regexp"`
+	RegexpStatus bool          `json:"regexp_status"`
 }
 
 type Entries []Entry
@@ -72,7 +72,7 @@ func (e Entry) GetMetrics(timeout time.Duration, h *http.Client, debug bool) (Me
 	took := time.Since(start)
 
 	// Set the last few values
-	m.Status = res.StatusCode
+	m.StatusCode = res.StatusCode
 	m.ResponseTime = took
 
 	if debug {
