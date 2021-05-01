@@ -4,13 +4,12 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
-	"os"
 	"time"
 
 	"github.com/segmentio/kafka-go"
 )
 
-func Producer() (*kafka.Writer, error) {
+func Producer(cfg Config) (*kafka.Writer, error) {
 
 	// Get the dialer with TLS config.
 	dialer, err := Dialer()
@@ -18,19 +17,16 @@ func Producer() (*kafka.Writer, error) {
 		return nil, err
 	}
 
-	kafkaHost := os.Getenv("KAFKA_HOST")
-	kafkaTopic := os.Getenv("KAFKA_TOPIC")
-
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{kafkaHost},
-		Topic:    kafkaTopic,
+		Brokers:  []string{cfg.KafkaHostname},
+		Topic:    cfg.KafkaTopic,
 		Balancer: &kafka.Hash{},
 		Dialer:   dialer,
 	})
 	return w, nil
 }
 
-func Consumer() (*kafka.Reader, error) {
+func Consumer(cfg Config) (*kafka.Reader, error) {
 
 	// Get the dialer with TLS config.
 	dialer, err := Dialer()
@@ -38,14 +34,10 @@ func Consumer() (*kafka.Reader, error) {
 		return nil, err
 	}
 
-	kafkaHost := os.Getenv("KAFKA_HOST")
-	kafkaTopic := os.Getenv("KAFKA_TOPIC")
-	kafkaConsumerGroup := os.Getenv("KAFKA_CONSUMER_GROUP")
-
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{kafkaHost},
-		GroupID: kafkaConsumerGroup,
-		Topic:   kafkaTopic,
+		Brokers: []string{cfg.KafkaHostname},
+		GroupID: cfg.KafkaConsumerGroup,
+		Topic:   cfg.KafkaTopic,
 		Dialer:  dialer,
 	})
 

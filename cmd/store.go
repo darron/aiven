@@ -27,7 +27,7 @@ func Store(cfg Config) error {
 	fmt.Printf("Config: %#v\n", cfg)
 
 	// Connect to Kafka.
-	r, err := Consumer()
+	r, err := Consumer(cfg)
 	if err != nil {
 		return fmt.Errorf("kafka problem: %w", err)
 	}

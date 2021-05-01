@@ -48,7 +48,7 @@ func Gather(cfg Config, filename string) error {
 	}
 
 	// Connect to Kafka.
-	w, err := Producer()
+	w, err := Producer(cfg)
 	if err != nil {
 		return fmt.Errorf("kafka problem: %w", err)
 	}
