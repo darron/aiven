@@ -45,6 +45,7 @@ func Gather(filename string) error {
 	// Lather, rinse, repeat.
 	for _, eachSite := range sites {
 		// Grab the metrics from each site.
+		log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, httpGetTimeout)
 		_, err := eachSite.GetMetrics(httpGetTimeout, &http.Client{}, debug)
 		if err != nil {
 			fmt.Println(err)

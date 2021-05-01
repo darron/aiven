@@ -33,8 +33,6 @@ type Entry struct {
 func (e Entry) GetMetrics(timeout time.Duration, h *http.Client, debug bool) (Metrics, error) {
 	var m Metrics
 
-	fmt.Printf("GetMetrics for %#v with timeout: %s\n", e, timeout)
-
 	// Let's set the stuff we know already.
 	m.Address = e.Address
 	m.Regexp = e.Regexp
