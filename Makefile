@@ -3,6 +3,7 @@ CONTAINER_NAME ?= aiven
 
 BUILD_COMMAND=-mod=vendor -o bin/$(BINARY_NAME) main.go
 UNAME=$(shell uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(shell uname -m)
 
 all: build
 
@@ -31,7 +32,7 @@ linux: clean ## Cross compile for linux.
 
 gzip: ## Compress current compiled binary.
 	gzip bin/$(BINARY_NAME)
-	mv bin/$(BINARY_NAME).gz bin/$(BINARY_NAME)-$(GIT_COMMIT)-$(UNAME)-amd64.gz
+	mv bin/$(BINARY_NAME).gz bin/$(BINARY_NAME)-$(UNAME)-$(ARCH).gz
 
 release: build gzip ## Full release process.
 
