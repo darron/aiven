@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/darron/aiven/site"
 	"github.com/spf13/cobra"
@@ -30,7 +28,7 @@ func init() {
 
 func Gather(filename string) error {
 	// Read website list from disk.
-	sites, err := getSites(filename)
+	sites, err := site.GetEntries(filename)
 	if err != nil {
 		return fmt.Errorf("getSites %q Error: %w", filename, err)
 	}
@@ -44,28 +42,4 @@ func Gather(filename string) error {
 		fmt.Printf("%#v\n", eachSite)
 	}
 	return nil
-}
-
-func getSites(filename string) (site.Entries, error) {
-	var entries site.Entries
-	f, err := os.Open(filename)
-	if err != nil {
-		return entries, err
-	}
-	r := csv.NewReader(f)
-	lines, err := r.ReadAll()
-	if err != nil {
-		return entries, err
-	}
-	for _, line := range lines {
-		s := site.Entry{
-			Address: line[0],
-			Regexp:  line[1],
-		}
-		// Only add this if we have an address - skip otherwise.
-		if s.Address != "" {
-			entries = append(entries, s)
-		}
-	}
-	return entries, nil
 }
