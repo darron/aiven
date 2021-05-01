@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/darron/aiven/site"
+	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 )
 
@@ -39,17 +42,44 @@ func Gather(filename string) error {
 	}
 
 	// Connect to Kafka.
+	w, err := Producer()
+	if err != nil {
+		return fmt.Errorf("kafka problem: %w", err)
+	}
+	defer w.Close()
 
 	// Contact each website, set a reasonable timeout.
 	// Send data to Kafka.
 	// Lather, rinse, repeat.
 	for _, eachSite := range sites {
+
 		// Grab the metrics from each site.
 		log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, httpGetTimeout)
-		_, err := eachSite.GetMetrics(httpGetTimeout, &http.Client{}, debug)
+		m, err := eachSite.GetMetrics(httpGetTimeout, &http.Client{}, debug)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		// Convert the m struct to JSON.
+		mJSON, err := json.Marshal(m)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		// Write the message to Kafka.
+		err = w.WriteMessages(context.Background(),
+			kafka.Message{
+				Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
+				Value: []byte(mJSON),
+			},
+		)
 		if err != nil {
 			fmt.Println(err)
 		}
+
 	}
+
 	return nil
 }
