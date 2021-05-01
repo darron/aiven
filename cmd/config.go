@@ -6,6 +6,7 @@ import (
 
 type Config struct {
 	CommonConfig
+	GatherConfig
 	StoreConfig
 }
 
@@ -19,6 +20,10 @@ type CommonConfig struct {
 
 type StoreConfig struct {
 	KafkaConsumerGroup string `env:"KAFKA_CONSUMER_GROUP,default=storage"`
+}
+
+type GatherConfig struct {
+	SitesList string `env:"SITES_LIST,default=websites.csv"`
 }
 
 func Load(configType string) (Config, error) {
@@ -40,6 +45,15 @@ func Load(configType string) (Config, error) {
 			return config, err
 		}
 		config.StoreConfig = store
+	}
+
+	if configType == "gather" {
+		var gather GatherConfig
+		err := envdecode.StrictDecode(&gather)
+		if err != nil {
+			return config, err
+		}
+		config.GatherConfig = gather
 	}
 
 	return config, nil

@@ -18,33 +18,31 @@ var (
 		Use:   "gather",
 		Short: "Gather metrics and save to Kafka",
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, err := Load("")
+			cfg, err := Load("gather")
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = Gather(cfg, list)
+			err = Gather(cfg)
 			if err != nil {
 				log.Fatal(err)
 			}
 		},
 	}
-	list           string
 	debug          bool
 	httpGetTimeout = 5 * time.Second
 )
 
 func init() {
-	gatherCmd.Flags().StringVarP(&list, "list", "l", "websites.csv", "List of websites")
 	gatherCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Show Debug Information")
 }
 
-func Gather(cfg Config, filename string) error {
+func Gather(cfg Config) error {
 	fmt.Printf("Config: %#v\n", cfg)
 
 	// Read website list from disk.
-	sites, err := site.GetEntries(filename)
+	sites, err := site.GetEntries(cfg.SitesList)
 	if err != nil {
-		return fmt.Errorf("GetEntries %q Error: %w", filename, err)
+		return fmt.Errorf("GetEntries %q Error: %w", cfg.SitesList, err)
 	}
 
 	// Connect to Kafka.
