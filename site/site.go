@@ -30,9 +30,7 @@ type Entry struct {
 func (e Entry) GetMetrics(timeout time.Duration, debug bool) (Metrics, error) {
 	var m Metrics
 
-	if debug {
-		fmt.Printf("GetMetrics for %#v with timeout: %#v\n", e, timeout)
-	}
+	fmt.Printf("GetMetrics for %#v with timeout: %s\n", e, timeout)
 
 	// Let's set the stuff we know already.
 	m.Address = e.Address
