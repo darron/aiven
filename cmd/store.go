@@ -34,6 +34,7 @@ func Store() error {
 		if err != nil {
 			break
 		}
+
 		fmt.Printf("message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
 	}
 

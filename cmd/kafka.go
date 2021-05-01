@@ -43,6 +43,7 @@ func Consumer() (*kafka.Reader, error) {
 
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{kafkaHost},
+		GroupID: "storage",
 		Topic:   kafkaTopic,
 		Dialer:  dialer,
 	})
