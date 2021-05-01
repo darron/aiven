@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/joeshaw/envdecode"
 )
 
@@ -23,7 +25,8 @@ type StoreConfig struct {
 }
 
 type GatherConfig struct {
-	SitesList string `env:"SITES_LIST,default=websites.csv"`
+	HTTPTimeout time.Duration `env:"HTTP_TIMEOUT,default=5s"`
+	SitesList   string        `env:"SITES_LIST,default=websites.csv"`
 }
 
 func Load(configType string) (Config, error) {

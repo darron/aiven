@@ -28,8 +28,7 @@ var (
 			}
 		},
 	}
-	debug          bool
-	httpGetTimeout = 5 * time.Second
+	debug bool
 )
 
 func init() {
@@ -58,8 +57,8 @@ func Gather(cfg Config) error {
 	for _, eachSite := range sites {
 
 		// Grab the metrics from each site.
-		log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, httpGetTimeout)
-		m, err := eachSite.GetMetrics(httpGetTimeout, &http.Client{}, debug)
+		log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, cfg.HTTPTimeout)
+		m, err := eachSite.GetMetrics(cfg.HTTPTimeout, &http.Client{}, debug)
 		if err != nil {
 			fmt.Println(err)
 			continue
