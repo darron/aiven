@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -17,7 +18,7 @@ type Metrics struct {
 	ResponseTime time.Duration
 	Status       int
 	Regexp       string
-	RegexpStatus string
+	RegexpStatus bool
 }
 
 type Entries []Entry
@@ -27,7 +28,9 @@ type Entry struct {
 	Regexp  string
 }
 
-func (e Entry) GetMetrics(timeout time.Duration, debug bool) (Metrics, error) {
+// GetMetrics returns metrics data for an Entry.
+// TODO: Setup mocks for better tests.
+func (e Entry) GetMetrics(timeout time.Duration, h *http.Client, debug bool) (Metrics, error) {
 	var m Metrics
 
 	fmt.Printf("GetMetrics for %#v with timeout: %s\n", e, timeout)
@@ -52,7 +55,6 @@ func (e Entry) GetMetrics(timeout time.Duration, debug bool) (Metrics, error) {
 	}
 
 	// Let's do the request.
-	h := &http.Client{}
 	start := time.Now()
 	res, err := h.Do(req)
 	if err != nil {
@@ -61,11 +63,13 @@ func (e Entry) GetMetrics(timeout time.Duration, debug bool) (Metrics, error) {
 
 	// We don't need the body unless we've got a regexp.
 	if e.Regexp != "" {
-		_, err := ioutil.ReadAll(res.Body)
+		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			return m, err
 		}
-		// TODO: Do the regexp here and assign the value.
+		// Do the regexp here and assign the value.
+		match, _ := regexp.MatchString(e.Regexp, string(body))
+		m.RegexpStatus = match
 	}
 	took := time.Since(start)
 
@@ -99,7 +103,8 @@ func GetEntries(filename string) (Entries, error) {
 	for _, line := range lines {
 		s := Entry{
 			Address: line[0],
-			Regexp:  line[1],
+			// TODO: Add regexp checking to make sure that it's a regexp - maybe.
+			Regexp: line[1],
 		}
 		// Only add this if we have an address - skip otherwise.
 		if s.Address != "" {

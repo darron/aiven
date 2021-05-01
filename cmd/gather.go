@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/darron/aiven/site"
@@ -44,7 +45,7 @@ func Gather(filename string) error {
 	// Lather, rinse, repeat.
 	for _, eachSite := range sites {
 		// Grab the metrics from each site.
-		_, err := eachSite.GetMetrics(httpGetTimeout, debug)
+		_, err := eachSite.GetMetrics(httpGetTimeout, &http.Client{}, debug)
 		if err != nil {
 			fmt.Println(err)
 		}
