@@ -31,6 +31,7 @@ type StoreConfig struct {
 
 // GatherConfig holds configuration only used by `bin/aiven gather`
 type GatherConfig struct {
+	GatherDelay time.Duration `env:"GATHER_DELAY,default=30s"`
 	HTTPTimeout time.Duration `env:"HTTP_TIMEOUT,default=5s"`
 	SitesList   string        `env:"SITES_LIST,default=websites.csv"`
 }

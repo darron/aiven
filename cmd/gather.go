@@ -29,10 +29,12 @@ var (
 		},
 	}
 	debug bool
+	loop  bool
 )
 
 func init() {
 	gatherCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Show Debug Information")
+	gatherCmd.Flags().BoolVarP(&loop, "loop", "l", true, "Loop forever by default")
 }
 
 func Gather(cfg Config) error {
@@ -53,34 +55,42 @@ func Gather(cfg Config) error {
 	// Contact each website, set a reasonable timeout.
 	// Send data to Kafka.
 	// Lather, rinse, repeat.
-	for _, eachSite := range sites {
+	for {
+		for _, eachSite := range sites {
 
-		// Grab the metrics from each site.
-		log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, cfg.HTTPTimeout)
-		m, err := eachSite.GetMetrics(cfg.HTTPTimeout, &http.Client{}, debug)
-		if err != nil {
-			fmt.Println(err)
-			continue
+			// Grab the metrics from each site.
+			log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, cfg.HTTPTimeout)
+			m, err := eachSite.GetMetrics(cfg.HTTPTimeout, &http.Client{}, debug)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			// Convert the m struct to JSON.
+			mJSON, err := json.Marshal(m)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			// Write the message to Kafka.
+			err = w.WriteMessages(context.Background(),
+				kafka.Message{
+					Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
+					Value: []byte(mJSON),
+				},
+			)
+			if err != nil {
+				fmt.Println(err)
+			}
+
 		}
-
-		// Convert the m struct to JSON.
-		mJSON, err := json.Marshal(m)
-		if err != nil {
-			fmt.Println(err)
-			continue
+		// If we're not looping - just break here.
+		if !loop {
+			break
 		}
-
-		// Write the message to Kafka.
-		err = w.WriteMessages(context.Background(),
-			kafka.Message{
-				Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
-				Value: []byte(mJSON),
-			},
-		)
-		if err != nil {
-			fmt.Println(err)
-		}
-
+		log.Printf("Sleeping for %s\n", cfg.GatherDelay)
+		time.Sleep(cfg.GatherDelay)
 	}
 
 	return nil
