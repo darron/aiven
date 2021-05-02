@@ -36,7 +36,6 @@ func init() {
 }
 
 func Gather(cfg Config) error {
-	fmt.Printf("Config: %#v\n", cfg)
 
 	// Read website list from disk.
 	sites, err := site.GetEntries(cfg.SitesList)

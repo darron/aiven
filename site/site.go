@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -26,6 +27,12 @@ type Entries []Entry
 type Entry struct {
 	Address string
 	Regexp  string
+}
+
+func ExtractMetrics(j []byte) (Metrics, error) {
+	var m Metrics
+	err := json.Unmarshal(j, &m)
+	return m, err
 }
 
 // GetMetrics returns metrics data for an Entry.
