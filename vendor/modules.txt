@@ -1,6 +1,14 @@
 # github.com/cenkalti/backoff/v4 v4.1.0
 ## explicit
 github.com/cenkalti/backoff/v4
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/gojektech/heimdall/v6 v6.1.0
+## explicit
+github.com/gojektech/heimdall/v6
+github.com/gojektech/heimdall/v6/httpclient
+# github.com/gojektech/valkyrie v0.0.0-20180215180059-6aee720afcdf
+github.com/gojektech/valkyrie
 # github.com/golang/snappy v0.0.1
 github.com/golang/snappy
 # github.com/inconshreveable/mousetrap v1.0.0
@@ -26,6 +34,10 @@ github.com/lib/pq/scram
 # github.com/pierrec/lz4 v2.6.0+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
+# github.com/pkg/errors v0.8.1
+github.com/pkg/errors
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
 # github.com/segmentio/kafka-go v0.4.15
 ## explicit
 github.com/segmentio/kafka-go
@@ -61,3 +73,10 @@ github.com/segmentio/kafka-go/sasl
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
+# github.com/stretchr/objx v0.1.1
+github.com/stretchr/objx
+# github.com/stretchr/testify v1.6.1
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/mock
+# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+gopkg.in/yaml.v3

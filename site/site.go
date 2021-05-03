@@ -11,6 +11,8 @@ import (
 	"os"
 	"regexp"
 	"time"
+
+	"github.com/gojektech/heimdall/v6"
 )
 
 // Metrics is the data we pass along via Kafka to be stored in Postgres
@@ -41,7 +43,7 @@ func ExtractMetrics(j []byte) (Metrics, error) {
 
 // GetMetrics returns metrics data for an Entry.
 // TODO: Setup mocks for better tests.
-func (e Entry) GetMetrics(timeout time.Duration, h *http.Client, debug bool) (Metrics, error) {
+func (e Entry) GetMetrics(timeout time.Duration, h heimdall.Doer, debug bool) (Metrics, error) {
 	var m Metrics
 
 	// Let's set the stuff we know already.
