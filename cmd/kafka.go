@@ -47,28 +47,32 @@ func Consumer(cfg Config) (*kafka.Reader, error) {
 // Dialer connects to Kafka and sets up TLS connection.
 func Dialer(cfg Config) (*kafka.Dialer, error) {
 	var dialer kafka.Dialer
+	var cert tls.Certificate
+	var err error
 
-	// Load the certs from the filesystem.
-	cert, err := tls.LoadX509KeyPair(cfg.KafkaCert, cfg.KafkaKey)
-	if err != nil {
-		return &dialer, err
-	}
+	// Let's disable TLS for Kafka sometimes.
+	if cfg.KafkaSSLEnable {
 
-	// Let's load the CA
-	ca, err := ioutil.ReadFile(cfg.KafkaCA)
-	if err != nil {
-		return &dialer, err
-	}
-	caCerts := x509.NewCertPool()
-	caCerts.AppendCertsFromPEM(ca)
+		// Load the certs from the filesystem.
+		cert, err = tls.LoadX509KeyPair(cfg.KafkaCert, cfg.KafkaKey)
+		if err != nil {
+			return &dialer, err
+		}
+		// Let's load the CA
+		ca, err := ioutil.ReadFile(cfg.KafkaCA)
+		if err != nil {
+			return &dialer, err
+		}
+		caCerts := x509.NewCertPool()
+		caCerts.AppendCertsFromPEM(ca)
 
-	dialer = kafka.Dialer{
-		Timeout: 15 * time.Second,
-		// DualStack: true,
-		TLS: &tls.Config{
+		dialer.TLS = &tls.Config{
 			Certificates: []tls.Certificate{cert},
 			RootCAs:      caCerts,
-		},
+		}
 	}
+
+	dialer.Timeout = 15 * time.Second
+
 	return &dialer, nil
 }

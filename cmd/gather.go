@@ -62,14 +62,14 @@ func Gather(cfg Config) error {
 			log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, cfg.HTTPTimeout)
 			m, err := eachSite.GetMetrics(cfg.HTTPTimeout, &http.Client{}, debug)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Printf("GetMetrics error: %s\n", err)
 				continue
 			}
 
 			// Convert the m struct to JSON.
 			mJSON, err := json.Marshal(m)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Printf("JSON marshal error: %s\n", err)
 				continue
 			}
 
@@ -81,7 +81,7 @@ func Gather(cfg Config) error {
 				},
 			)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Printf("kafka write error: %s\n", err)
 			}
 
 		}

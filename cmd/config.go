@@ -15,11 +15,12 @@ type Config struct {
 
 // CommonConfig holds configuration common to all modes of operation.
 type CommonConfig struct {
-	KafkaTopic    string `env:"KAFKA_TOPIC,default=sites"`
-	KafkaHostname string `env:"KAFKA_HOST,required"`
-	KafkaCert     string `env:"KAFKA_CERT,default=service.cert"`
-	KafkaKey      string `env:"KAFKA_KEY,default=service.key"`
-	KafkaCA       string `env:"KAFKA_CA,default=ca.pem"`
+	KafkaSSLEnable bool   `env:"KAFKA_SSL_ENABLE,default=true"`
+	KafkaTopic     string `env:"KAFKA_TOPIC,default=sites"`
+	KafkaHostname  string `env:"KAFKA_HOST,required"`
+	KafkaCert      string `env:"KAFKA_CERT,default=service.cert"`
+	KafkaKey       string `env:"KAFKA_KEY,default=service.key"`
+	KafkaCA        string `env:"KAFKA_CA,default=ca.pem"`
 }
 
 // StoreConfig holds configuration only used by `bin/aiven store`
