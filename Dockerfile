@@ -13,8 +13,5 @@ RUN mkdir /app
 COPY --from=build /src/bin/aiven /app/aiven
 WORKDIR /app
 ADD websites.csv /app/websites.csv
-ADD ca.pem /app/ca.pem
-ADD service.cert /app/service.cert
-ADD service.key /app/service.key
 
 ENTRYPOINT ["/app/aiven"]

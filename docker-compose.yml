@@ -5,8 +5,12 @@ services:
     entrypoint: /app/aiven gather
     env_file:
       - docker.env
+    volumes:
+      - ./certs:/certs
   store:
     image: aiven:latest
     entrypoint: /app/aiven store
     env_file:
       - docker.env
+    volumes:
+      - ./certs:/certs

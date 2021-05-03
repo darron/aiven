@@ -31,7 +31,7 @@ What can be better?
 - [x] Dependency injection to help with mocking
 - [x] Additional retries and error checking for Kafka writes
 - [x] Additional retries and error checking for Postgres writes
-- [ ] Putting certificates inside Docker images isn't great - inject at runtime
+- [x] Putting certificates inside Docker images isn't great - inject at runtime
 - [ ] More tests of all varieties: unit, integration, mocking
 - [ ] Try out https://github.com/testcontainers/testcontainers-go for end to end tests
 - [ ] Naive datbase schema improved - could optimize, do some normalization, add rollups, use table partitioning

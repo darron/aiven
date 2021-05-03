@@ -1,8 +1,7 @@
 bin/
 .envrc
-ca.pem
-service.cert
-service.key
 .DS_Store
-postgres-ca.pem
+certs/service.cert
+certs/service.key
+certs/ca.pem
 docker.env
