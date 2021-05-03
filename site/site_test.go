@@ -8,6 +8,7 @@ import (
 
 var (
 	testfileContent = []byte("https://www.cnn.com,covid\nhttps://www.google.com,\nhttps://aiven.io,kafka")
+	testMetricJSON  = []byte(`{"captured_at":"2021-05-03T17:59:49.124364972Z","address":"https://aiven.io","response_time":284510084,"status_code":200,"regexp":"kafka","regexp_status":true}`)
 )
 
 func TestGetEntries(t *testing.T) {
@@ -42,6 +43,20 @@ func TestGetEntriesFail(t *testing.T) {
 	_, err = GetEntries(f)
 	if err == nil {
 		t.Error("That should have failed")
+	}
+}
+
+func TestExtractMetrics(t *testing.T) {
+	m, err := ExtractMetrics(testMetricJSON)
+	if err != nil {
+		t.Error(err)
+	}
+	if m.Address != "https://aiven.io" {
+		t.Errorf("Want: %s Got: %s", "https://aiven.io", m.Address)
+	}
+	_, err = ExtractMetrics([]byte(""))
+	if err == nil {
+		t.Error("That should have errored")
 	}
 }
 

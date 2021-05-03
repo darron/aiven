@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// Metrics is the data we pass along via Kafka to be stored in Postgres
 type Metrics struct {
 	CapturedAt   time.Time     `json:"captured_at"`
 	Address      string        `json:"address"`
@@ -22,13 +23,16 @@ type Metrics struct {
 	RegexpStatus bool          `json:"regexp_status"`
 }
 
+// Entries is a slice of Entry values
 type Entries []Entry
 
+// Entry represents an Address and optional Regexp to query for HTTP metrics.
 type Entry struct {
 	Address string
 	Regexp  string
 }
 
+// ExtractMetrics takes a byte string of JSON and converts to Metrics
 func ExtractMetrics(j []byte) (Metrics, error) {
 	var m Metrics
 	err := json.Unmarshal(j, &m)
