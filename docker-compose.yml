@@ -1,43 +1,12 @@
-# Kafka doesn't work for me.
 version: '2'
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    ports:
-      - "2181:2181"
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092"
-    environment:
-      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on: 
-        - zookeeper
-  postgres:
-    image: postgres
-    ports:
-        - "5432"
-    environment:
-        POSTGRES_PASSWORD: "secret"
   gather:
     image: aiven:latest
-    entrypoint: aiven gather
-    environment:
-        KAFKA_HOST: kafka:9092
-        KAFKA_SSL_ENABLE: "false"
-        SITES_LIST: "/bin/websites.csv"
-    depends_on:
-        - kafka
+    entrypoint: /app/aiven gather
+    env_file:
+      - docker.env
   store:
     image: aiven:latest
-    entrypoint: aiven store
-    environment:
-        KAFKA_HOST: kafka:9092
-        KAFKA_SSL_ENABLE: "false"
-        POSTGRES_URL: "postgres://postgres:secret@postgres:5432/postgres?sslmode=disable"
-    depends_on:
-        - kafka
-        - postgres
+    entrypoint: /app/aiven store
+    env_file:
+      - docker.env

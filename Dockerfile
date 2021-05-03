@@ -9,8 +9,12 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
 
 # Copy the binary.
-COPY --from=build /src/bin/aiven /bin/aiven
-WORKDIR /bin
-ADD websites.csv /bin/websites.csv
+RUN mkdir /app
+COPY --from=build /src/bin/aiven /app/aiven
+WORKDIR /app
+ADD websites.csv /app/websites.csv
+ADD ca.pem /app/ca.pem
+ADD service.cert /app/service.cert
+ADD service.key /app/service.key
 
-ENTRYPOINT ["/bin/aiven"]
+ENTRYPOINT ["/app/aiven"]

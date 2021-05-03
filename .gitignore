@@ -5,3 +5,4 @@ service.cert
 service.key
 .DS_Store
 postgres-ca.pem
+docker.env
