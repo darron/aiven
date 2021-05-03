@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/darron/aiven/site"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
@@ -74,15 +75,28 @@ func Gather(app *App) error {
 				continue
 			}
 
+			// Setup KafkaWriter func closure
+			writeFunc := func() error {
+				err := app.KWriter.WriteMessages(context.Background(),
+					kafka.Message{
+						Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
+						Value: []byte(mJSON),
+					},
+				)
+				if err != nil {
+					return err
+				}
+				return nil
+			}
+
+			// Let's get a retry
+			bo, cancel := GetBackoff(1*time.Second, 10*time.Second)
+			defer cancel()
+
 			// Write the message to Kafka.
-			err = app.KWriter.WriteMessages(context.Background(),
-				kafka.Message{
-					Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
-					Value: []byte(mJSON),
-				},
-			)
+			err = backoff.Retry(writeFunc, bo)
 			if err != nil {
-				fmt.Printf("kafka write error: %s\n", err)
+				log.Println("Kafka write Failed: ", err)
 			}
 
 		}
