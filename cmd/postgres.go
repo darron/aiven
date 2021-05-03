@@ -4,6 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// DBConnect actually connects to Postgres
 func DBConnect(cfg Config) (*sqlx.DB, error) {
 	var db *sqlx.DB
 	var err error
@@ -22,7 +23,7 @@ func DBConnect(cfg Config) (*sqlx.DB, error) {
 	return db, nil
 }
 
-// DBTable is the SQL that creates the main table in Postgres.
+// DBTable is the SQL that creates the main table in Postgres
 func DBTable() string {
 	sql := `CREATE TABLE IF NOT EXISTS metrics (
 			id serial PRIMARY KEY,
