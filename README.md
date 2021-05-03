@@ -19,7 +19,7 @@ How to launch?
 git clone https://github.com/darron/aiven.git
 cd aiven
 # Download service.cert, service.key, ca.pem from Aiven Kafka service page.
-# Copy them into this folder.
+# Copy them into the "certs" folder.
 cp docker.env.dist docker.env
 # Update docker.env with KAFKA_HOST and POSTGRES_URL from Aiven services.
 make docker
