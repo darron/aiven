@@ -32,6 +32,7 @@ var storeCmd = &cobra.Command{
 	},
 }
 
+// Store listens to a Kafka topic and writes the site.Metrics to Postgres
 func Store(app *App) error {
 
 	// Cleanup after Kafka
@@ -57,6 +58,7 @@ func Store(app *App) error {
 		metric, err := site.ExtractMetrics(m.Value)
 		if err != nil {
 			log.Println(err)
+			continue
 		}
 
 		// Setup SaveToPostgres closure.
@@ -83,6 +85,7 @@ func Store(app *App) error {
 	return nil
 }
 
+// SaveToPostgres saves the metric to Postgres.
 func SaveToPostgres(app *App, metric site.Metrics) error {
 	// Insert the metric into Postgres.
 	query := `INSERT INTO metrics 

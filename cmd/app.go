@@ -8,6 +8,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+// App holds all of the dependencies we use in the app.
 type App struct {
 	C       Config
 	DB      *sqlx.DB
@@ -16,6 +17,7 @@ type App struct {
 	KWriter *kafka.Writer
 }
 
+// GetAppConfig returns an *App we use in Store and Gather.
 func GetAppConfig(cfg Config) (*App, error) {
 	var a App
 

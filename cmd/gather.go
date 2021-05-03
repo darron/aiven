@@ -43,6 +43,7 @@ func init() {
 	gatherCmd.Flags().BoolVarP(&loop, "loop", "l", true, "Loop forever by default")
 }
 
+// Gather gets site.Metrics from a list of websites and writes them to a Kafka topic
 func Gather(app *App) error {
 
 	// Read website list from disk.
