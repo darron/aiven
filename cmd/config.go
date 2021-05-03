@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"time"
 
 	"github.com/joeshaw/envdecode"
@@ -15,6 +16,7 @@ type Config struct {
 
 // CommonConfig holds configuration common to all modes of operation.
 type CommonConfig struct {
+	AppType        string
 	KafkaSSLEnable bool   `env:"KAFKA_SSL_ENABLE,default=true"`
 	KafkaTopic     string `env:"KAFKA_TOPIC,default=sites"`
 	KafkaHostname  string `env:"KAFKA_HOST,required"`
@@ -57,6 +59,7 @@ func Load(configType string) (Config, error) {
 			return config, err
 		}
 		config.StoreConfig = store
+		config.AppType = "store"
 	}
 
 	if configType == "gather" {
@@ -66,6 +69,11 @@ func Load(configType string) (Config, error) {
 			return config, err
 		}
 		config.GatherConfig = gather
+		config.AppType = "gather"
+	}
+
+	if config.AppType == "" {
+		return config, errors.New("must specify known configType")
 	}
 
 	return config, nil

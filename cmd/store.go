@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/darron/aiven/site"
@@ -14,37 +13,36 @@ var storeCmd = &cobra.Command{
 	Use:   "store",
 	Short: "store metrics in Postgres",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Get base config values
 		cfg, err := Load("store")
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = Store(cfg)
+		// Get complete AppConfig for DI
+		app, err := GetAppConfig(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = Store(app)
 		if err != nil {
 			log.Fatal(err)
 		}
 	},
 }
 
-func Store(cfg Config) error {
+func Store(app *App) error {
 
-	// Connect to Kafka.
-	r, err := Consumer(cfg)
-	if err != nil {
-		return fmt.Errorf("kafka problem: %w", err)
-	}
-	defer r.Close()
+	// Cleanup after Kafka
+	defer app.KReader.Close()
 
-	// Connect to Postgres
-	db, err := DBConnect(cfg)
-	if err != nil {
-		return fmt.Errorf("postgres problem: %w", err)
-	}
+	// Cleanup after Postgres
+	defer app.DB.Close()
 
 	log.Println("Connected to Kafka and Postgres - waiting for metrics")
 
 	// Read from Kafka.
 	for {
-		m, err := r.ReadMessage(context.Background())
+		m, err := app.KReader.ReadMessage(context.Background())
 		if err != nil {
 			log.Println(err)
 			break
@@ -64,7 +62,7 @@ func Store(cfg Config) error {
 			(captured_at, address, response_time, status_code, regexp, regexp_status) 
 			VALUES
 			($1, $2, $3, $4, $5, $6)`
-		_, err = db.Exec(query, metric.CapturedAt, metric.Address, metric.ResponseTime.Milliseconds(), metric.StatusCode, metric.Regexp, metric.RegexpStatus)
+		_, err = app.DB.Exec(query, metric.CapturedAt, metric.Address, metric.ResponseTime.Milliseconds(), metric.StatusCode, metric.Regexp, metric.RegexpStatus)
 		if err != nil {
 			log.Printf("SQL Error: %s\n", err)
 		}

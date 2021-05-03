@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/darron/aiven/site"
@@ -18,11 +17,17 @@ var (
 		Use:   "gather",
 		Short: "Gather metrics and save to Kafka",
 		Run: func(cmd *cobra.Command, args []string) {
+			// Get base config values.
 			cfg, err := Load("gather")
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = Gather(cfg)
+			// Get complete AppConfig for DI
+			app, err := GetAppConfig(cfg)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = Gather(app)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -37,20 +42,16 @@ func init() {
 	gatherCmd.Flags().BoolVarP(&loop, "loop", "l", true, "Loop forever by default")
 }
 
-func Gather(cfg Config) error {
+func Gather(app *App) error {
 
 	// Read website list from disk.
-	sites, err := site.GetEntries(cfg.SitesList)
+	sites, err := site.GetEntries(app.C.SitesList)
 	if err != nil {
-		return fmt.Errorf("GetEntries %q Error: %w", cfg.SitesList, err)
+		return fmt.Errorf("GetEntries %q Error: %w", app.C.SitesList, err)
 	}
 
-	// Connect to Kafka.
-	w, err := Producer(cfg)
-	if err != nil {
-		return fmt.Errorf("kafka problem: %w", err)
-	}
-	defer w.Close()
+	// Let's defer Kafka Closer.
+	defer app.KWriter.Close()
 
 	// Contact each website, set a reasonable timeout.
 	// Send data to Kafka.
@@ -59,8 +60,8 @@ func Gather(cfg Config) error {
 		for _, eachSite := range sites {
 
 			// Grab the metrics from each site.
-			log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, cfg.HTTPTimeout)
-			m, err := eachSite.GetMetrics(cfg.HTTPTimeout, &http.Client{}, debug)
+			log.Printf("GetMetrics for %#v with timeout: %s\n", eachSite, app.C.HTTPTimeout)
+			m, err := eachSite.GetMetrics(app.C.HTTPTimeout, app.HTTP, debug)
 			if err != nil {
 				fmt.Printf("GetMetrics error: %s\n", err)
 				continue
@@ -74,7 +75,7 @@ func Gather(cfg Config) error {
 			}
 
 			// Write the message to Kafka.
-			err = w.WriteMessages(context.Background(),
+			err = app.KWriter.WriteMessages(context.Background(),
 				kafka.Message{
 					Key:   []byte(time.Now().UTC().Format(time.RFC3339Nano)),
 					Value: []byte(mJSON),
@@ -89,8 +90,8 @@ func Gather(cfg Config) error {
 		if !loop {
 			break
 		}
-		log.Printf("Sleeping for %s\n", cfg.GatherDelay)
-		time.Sleep(cfg.GatherDelay)
+		log.Printf("Sleeping for %s\n", app.C.GatherDelay)
+		time.Sleep(app.C.GatherDelay)
 	}
 
 	return nil
