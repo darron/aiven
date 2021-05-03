@@ -22,8 +22,12 @@ cd aiven
 # Copy them into the "certs" folder.
 cp docker.env.dist docker.env
 # Update docker.env with KAFKA_HOST and POSTGRES_URL from Aiven services.
+# Build the image locally.
 make docker
-docker compose up --always-recreate-dep
+# NOTE: If you don't want to build the image locally, change: "aiven:latest"
+# in docker-compose.yml to "darron/aiven:latest": 
+# https://hub.docker.com/repository/docker/darron/aiven
+docker compose up --always-recreate-dep # On Linux you might need to run "docker-compose"
 ```
 
 What can be better?
