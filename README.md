@@ -25,3 +25,15 @@ cp docker.env.dist docker.env
 make docker
 docker compose up
 ```
+
+What can be better?
+
+- [ ] Dependency injection to help with mocking
+- [ ] Additional retries and error checking for Kafka writes
+- [ ] Additional retries and error checking for Postgres writes
+- [ ] More tests of all varieties: unit, integration, mocking
+- [ ] Try out https://github.com/testcontainers/testcontainers-go for end to end tests
+- [ ] Naive datbase schema improved
+- [ ] Move to protobuf for Kafka transport to optimize
+- [ ] Expose metrics for the running services via HTTP
+- [ ] Putting certificates inside Docker images isn't great - inject at runtime
