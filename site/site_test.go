@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 )
 
 var (
@@ -57,6 +58,37 @@ func TestExtractMetrics(t *testing.T) {
 	_, err = ExtractMetrics([]byte(""))
 	if err == nil {
 		t.Error("That should have errored")
+	}
+}
+
+func TestGetMetrics(t *testing.T) {
+	g := Entry{
+		Address: "https://www.google.com/",
+		Regexp:  "fake",
+	}
+	// This should work properly
+	m, err := g.GetMetrics(1*time.Second, MockGoogleWorkingEntry{}, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if m.StatusCode != 200 {
+		t.Errorf("Want: %d, Got: %d", 200, m.StatusCode)
+	}
+	// This request should be broken
+	m, err = g.GetMetrics(1*time.Second, MockGoogleBrokenEntry{}, false)
+	if err == nil {
+		t.Error("This should be broken")
+	}
+	if m.StatusCode != 0 {
+		t.Error("That should have been blank")
+	}
+	// This request should fail because it exceeded the context timeout.
+	_, err = g.GetMetrics(10*time.Millisecond, MockGoogleSlowEntry{}, false)
+	if err == nil {
+		t.Error("That should have failed")
+	}
+	if err.Error() != "context deadline exceeded" {
+		t.Error("That should be a context error")
 	}
 }
 

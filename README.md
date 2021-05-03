@@ -23,7 +23,7 @@ cd aiven
 cp docker.env.dist docker.env
 # Update docker.env with KAFKA_HOST and POSTGRES_URL from Aiven services.
 make docker
-docker compose up
+docker compose up --always-recreate-dep
 ```
 
 What can be better?

@@ -42,7 +42,6 @@ func ExtractMetrics(j []byte) (Metrics, error) {
 }
 
 // GetMetrics returns metrics data for an Entry.
-// TODO: Setup mocks for better tests.
 func (e Entry) GetMetrics(timeout time.Duration, h heimdall.Doer, debug bool) (Metrics, error) {
 	var m Metrics
 
