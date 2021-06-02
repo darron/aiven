@@ -38,7 +38,7 @@ What can be better?
 - [x] Putting certificates inside Docker images isn't great - inject at runtime
 - [ ] More tests of all varieties: unit, integration, mocking
 - [ ] Try out https://github.com/testcontainers/testcontainers-go for end to end tests
-- [ ] Naive datbase schema improved - could optimize, do some normalization, add rollups, use table partitioning
+- [ ] Naive database schema improved - could optimize, do some normalization, add rollups, use table partitioning
 - [ ] Move to protobuf for Kafka transport to optimize
 - [ ] Expose metrics for the running services via HTTP
 - [ ] Use goroutines so that write operations don't block
