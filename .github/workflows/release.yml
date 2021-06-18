@@ -23,4 +23,4 @@ jobs:
           goarch: ${{ matrix.goarch }}
           project_path: "."
           binary_name: "aiven"
-          extra_files: README.md Dockerfile websites.csv docker-compose-yml docker.env.dist
+          extra_files: README.md Dockerfile websites.csv docker-compose.yml docker.env.dist
