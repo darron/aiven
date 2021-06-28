@@ -1,6 +1,8 @@
 aiven
 ============
 
+[![Go](https://github.com/darron/aiven/actions/workflows/ci.yml/badge.svg)](https://github.com/darron/aiven/actions/workflows/ci.yml)
+
 Small test project.
 
 What do you need?
